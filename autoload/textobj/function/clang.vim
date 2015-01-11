@@ -29,6 +29,20 @@ function! textobj#function#clang#select(obj)
     if a:obj ==# 'a'
         return ['V', start, end]
     else
+        let view = winsaveview()
+        let left = getpos("'<")
+        let right = getpos("'>")
+        try
+            call cursor(extent.end.line, extent.end.column - 1)
+            execute "normal! viB\<Esc>"
+            let start[1:2] = getpos("'<")[1:2]
+            let end[1:2] = getpos("'>")[1:2]
+            return [(getline(extent.end.line) =~ '^\s*}' ? 'V' : 'v'), start, end]
+        finally
+            call winrestview(view)
+            call setpos("'<", left)
+            call setpos("'>", right)
+        endtry
     endif
 endfunction
 
