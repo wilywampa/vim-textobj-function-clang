@@ -1,10 +1,4 @@
-if !exists('*g:textobj_function_c_select')
-    function! g:textobj_function_c_select(obj)
-        return textobj#function#clang#select(a:obj)
-    endfunction
-endif
-
-let b:textobj_function_select = function('g:textobj_function_c_select')
+let b:textobj_function_select = function('textobj#function#clang#select')
 
 if exists('b:undo_ftplugin')
   let b:undo_ftplugin .= '|'
