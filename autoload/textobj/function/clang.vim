@@ -1,9 +1,9 @@
 let g:textobj_function_clang_default_compiler_args = get(g:, 'textobj_function_clang_default_compiler_args', "")
-let g:textobj_function_clang_include_headers = get(g:, 'textobj_function_clang_include_headers', "")
+let g:textobj_function_clang_include_headers = get(g:, 'textobj_function_clang_include_headers', 1)
 
 function! s:prepare_temp_file()
     if g:textobj_function_clang_include_headers
-        let temp_name = expand('%:p:h') . substitute(tempname(), '\W', '_', 'g') . (&filetype ==# 'c' ? '.c' : '.cpp')
+        let temp_name = expand('%:p:h') . '/' . substitute(tempname(), '\W', '_', 'g') . (&filetype ==# 'c' ? '.c' : '.cpp')
         call writefile(getline(1, '$'), temp_name)
     else
         let temp_name = tempname() . (&filetype ==# 'c' ? '.c' : '.cpp')
