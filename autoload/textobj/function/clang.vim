@@ -46,3 +46,51 @@ function! textobj#function#clang#select(obj)
     endif
 endfunction
 
+function! textobj#function#clang#select_ac()
+    let temp_name = s:prepare_temp_file()
+    try
+        let extent = libclang#location#class_extent(temp_name, line('.'), col('.'), get(b:, 'textobj_function_clang_default_compiler_args', g:textobj_function_clang_default_compiler_args))
+    finally
+        call delete(temp_name)
+    endtry
+    if empty(extent) || extent.start.file !=# extent.end.file
+        return 0
+    endif
+    let pos = getpos('.')
+    let start = [pos[0], extent.start.line, extent.start.column, pos[3]]
+    let end = [pos[0], extent.end.line, extent.end.column, pos[3]]
+    while end[1] < line('$') && nextnonblank(end[1] + 1) > end[1] + 1
+        let end[1] += 1
+    endwhile
+    return ['V', start, end]
+endfunction
+
+function! textobj#function#clang#select_ic()
+    let temp_name = s:prepare_temp_file()
+    try
+        let extent = libclang#location#class_extent(temp_name, line('.'), col('.'), get(b:, 'textobj_function_clang_default_compiler_args', g:textobj_function_clang_default_compiler_args))
+    finally
+        call delete(temp_name)
+    endtry
+    if empty(extent) || extent.start.file !=# extent.end.file
+        return 0
+    endif
+    let pos = getpos('.')
+    let start = [pos[0], extent.start.line, extent.start.column, pos[3]]
+    let end = [pos[0], extent.end.line, extent.end.column, pos[3]]
+    let view = winsaveview()
+    let left = getpos("'<")
+    let right = getpos("'>")
+    try
+        call cursor(extent.end.line, extent.end.column - 1)
+        execute "normal! viB\<Esc>"
+        let start[1:2] = getpos("'<")[1:2]
+        let end[1:2] = getpos("'>")[1:2]
+        return [(getline(extent.end.line) =~ '^\s*}' ? 'V' : 'v'), start, end]
+    finally
+        call winrestview(view)
+        call setpos("'<", left)
+        call setpos("'>", right)
+    endtry
+endfunction
+
