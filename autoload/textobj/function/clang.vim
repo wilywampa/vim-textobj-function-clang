@@ -1,5 +1,5 @@
 let g:textobj_function_clang_default_compiler_args = get(g:, 'textobj_function_clang_default_compiler_args', "")
-let g:textobj_function_clang_include_headers = get(g:, 'textobj_function_clang_include_headers', 1)
+let g:textobj_funciton_clang_include_headers = get(g:, 'textobj_funciton_clang_include_headers', "")
 
 function! s:prepare_temp_file()
     if g:textobj_function_clang_include_headers
